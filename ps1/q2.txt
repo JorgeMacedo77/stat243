@@ -1,0 +1,43 @@
+#! /bin/bash
+# STAT 243, PS1
+
+
+################ Problem 2 (a) #################################
+# download the data online and save it to a file
+wget -O data_download "http://data.un.org/Handlers/DownloadHandler.ashx?DataFilter=itemCode:526&DataMartId=FAO&Format=csv&c=2,3,4,5,6,7&s=countryName:asc,elementCode:asc,year:desc"
+
+# unzip and rename to data
+unzip -p data_download > data 
+
+# extract the lines of the regions (contains '+')
+grep "["\+"]" data > data_region
+
+# extract the lines of the countries (without '+')
+grep -v "["\+"]" data > data_country
+
+# find the top five countries with the biggest harvest area in 2005
+grep "Area Harvested.*2005.*Ha" data_country | sort --field-separator=',' -k6,6 -r | cut -d',' -f1 | head -5 > top_five_country_harvest_area_2005 ##### <------------------ answer saved in this file
+
+# write a for loop to find out the top five countries 
+for ((yr=1965;yr<=2005;yr=yr+10))
+do
+  grep "Area Harvested.*"$yr".*Ha" data_country | sort --field-separator=',' -k6,6 -r | cut -d',' -f1 | head -5 > top_five_country_harvest_area_$yr
+done
+#### the top five countries changed ######
+
+############## Problem 2 (b) #################################
+function showdata(){
+# get the url
+	web1="http://data.un.org/Handlers/DownloadHandler.ashx?DataFilter=itemCode:"
+	
+	web2="&DataMartId=FAO&Format=csv&c=2,3,4,5,6,7&s=countryName:asc,elementCode:asc,year:desc"
+
+	web=$web1$1$web2
+# download the data
+	wget $web -O filename
+# unzip the data
+	unzip -p filename >file.csv
+# print out the data
+	cat file.csv
+}
+

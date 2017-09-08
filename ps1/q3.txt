@@ -1,0 +1,17 @@
+
+############# Problem 3 ######################################
+## This file is to automatically download all the files ending from .txt
+# download the whole website
+wget http://www1.ncdc.noaa.gov/pub/data/ghcn/daily/
+
+
+# remove all the files except .txt
+grep -o "[a-z]*\-*[a-z]*\.txt" index.html|uniq >tx.txt
+#grep the filename.txt from the html file
+
+base_url="http://www1.ncdc.noaa.gov/pub/data/ghcn/daily/"
+for file in $(less tx.txt)
+    do
+        echo Downloading $file ------------------
+        wget $base_url$file
+    done
